@@ -248,3 +248,87 @@
 #detail-time-bar {
   transition: width 1s ease-out;
 }
+
+/* ─── App Loader ─────────────────────────────────────────────── */
+.app-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: var(--color-background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+.app-loader.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.app-loader__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.app-loader__logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background-color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-on-primary);
+  box-shadow: 0 12px 32px -8px rgba(53, 37, 205, 0.45);
+}
+.app-loader__logo .material-symbols-outlined {
+  font-size: 30px;
+}
+
+.app-loader__spin {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid var(--color-surface-variant);
+  border-top-color: var(--color-primary);
+  animation: loader-spin 0.9s linear infinite;
+}
+
+.app-loader__label {
+  font-family: var(--font-headline-md);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-on-surface);
+  margin-top: 0.25rem;
+}
+
+.app-loader__sub {
+  font-family: var(--font-label-sm);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-on-surface-variant);
+  letter-spacing: 0.02em;
+  opacity: 0.75;
+}
+
+@keyframes loader-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Respect reduced-motion preferences — kills the perpetual spin for users
+   who get vestibular symptoms from continuous motion. */
+@media (prefers-reduced-motion: reduce) {
+  .app-loader__spin {
+    animation: none;
+    border-top-color: var(--color-primary);
+    background: var(--color-primary);
+    /* Wedge the ring to indicate a static determinate state */
+    border-right-color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+    border-left-color: var(--color-primary);
+    opacity: 0.55;
+  }
+}

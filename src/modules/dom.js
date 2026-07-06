@@ -5,6 +5,21 @@ import { format, parseISO, isValid } from 'date-fns';
 const app = getApp();
 let confirmCallback = null; // for custom confirm modal
 
+// ─── Helpers ──────────────────────────────────────────────────────
+/**
+ * Escape user-controlled text before inserting into innerHTML.
+ * Use only for text nodes; never feed HTML structure through this.
+ */
+function escapeHtml(text) {
+  if (text == null) return '';
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 // ─── DOM References ────────────────────────────────────────────────
 const $ = (sel) => document.querySelector(sel);
 
@@ -107,20 +122,39 @@ const detailTimePlayBtn = $('#detail-time-play-btn');
 // ─── Mobile Sidebar ───────────────────────────────────────────────
 const sidebar = document.querySelector('aside');
 
+/**
+ * Show or hide the mobile sidebar drawer.
+ *
+ * - On viewports ≥768px (the Tailwind `md` breakpoint), this is a no-op;
+ *   the aside is rendered via the static HTML class `md:flex` and sized
+ *   by `w-80` for the desktop layout (320px wide left rail).
+ * - On viewports <768px, the aside starts hidden. When `show === true`
+ *   we apply `position: fixed` so the drawer overlays the main content;
+ *   `w-full` + fixed positioning fills the entire viewport horizontally
+ *   (already 100% of any common phone-sized viewport, so we deliberately
+ *   do NOT add a `max-w-*` cap — every prior iteration of adding one had
+ *   zero visible effect on real phones).
+ * - The drawer closes when the user taps the backdrop
+ *   (#mobile-sidebar-overlay) or selects a project from the list inside
+ *   the drawer. Note: there is intentionally no `resize` listener, so if
+ *   the viewport crosses 768px while the drawer is open, the `fixed`
+ *   positioning and full-screen classes stick around until the next toggle.
+ *
+ * @param {boolean|undefined} show - true to open, false to close, undefined to toggle
+ */
 function toggleMobileSidebar(show) {
   if (!sidebar) return;
-  // Only toggle mobile sidebar behavior on small screens
   if (window.innerWidth >= 768) return;
   if (show === undefined) {
     show = sidebar.classList.contains('hidden');
   }
   if (show) {
     sidebar.classList.remove('hidden');
-    sidebar.classList.add('fixed', 'inset-0', 'z-50', 'w-full', 'max-w-xs');
+    sidebar.classList.add('fixed', 'inset-y-0', 'left-0', 'z-50', 'w-full');
     mobileSidebarOverlay?.classList.remove('hidden');
   } else {
     sidebar.classList.add('hidden');
-    sidebar.classList.remove('fixed', 'inset-0', 'z-50', 'w-full', 'max-w-xs');
+    sidebar.classList.remove('fixed', 'inset-y-0', 'left-0', 'z-50', 'w-full');
     mobileSidebarOverlay?.classList.add('hidden');
   }
 }
@@ -395,20 +429,25 @@ function renderTaskDetail(todo) {
   }`;
 
   // Assignee avatar area
+  detailAssigneeAvatar.className = 'size-8 rounded-full border-2 border-surface-container-lowest bg-primary/10 flex items-center justify-center';
+  detailAssigneeAvatar.innerHTML = '';
   if (todo.assignee) {
-    const initial = todo.assignee.charAt(0).toUpperCase();
-    detailAssigneeAvatar.innerHTML = `<span class="text-primary text-xs font-bold">${initial}</span>`;
-    detailAssigneeAvatar.className = 'size-8 rounded-full border-2 border-surface-container-lowest bg-primary/10 flex items-center justify-center';
+    const initialSpan = document.createElement('span');
+    initialSpan.className = 'text-primary text-xs font-bold';
+    initialSpan.textContent = todo.assignee.charAt(0).toUpperCase();
+    detailAssigneeAvatar.appendChild(initialSpan);
     detailAssigneeName.textContent = todo.assignee;
   } else {
-    detailAssigneeAvatar.innerHTML = '<span class="material-symbols-outlined text-primary text-sm">person</span>';
-    detailAssigneeAvatar.className = 'size-8 rounded-full border-2 border-surface-container-lowest bg-primary/10 flex items-center justify-center';
+    const personIcon = document.createElement('span');
+    personIcon.className = 'material-symbols-outlined text-primary text-sm';
+    personIcon.textContent = 'person';
+    detailAssigneeAvatar.appendChild(personIcon);
     detailAssigneeName.textContent = 'Unassigned';
   }
 
   // Description
   if (todo.description) {
-    detailDescription.innerHTML = `<p class="text-on-surface leading-relaxed">${todo.description.replace(/\n/g, '<br>')}</p>`;
+    detailDescription.innerHTML = `<p class="text-on-surface leading-relaxed">${escapeHtml(todo.description).replace(/\n/g, '<br>')}</p>`;
   } else {
     detailDescription.innerHTML = '<p class="text-on-surface-variant italic">No description provided.</p>';
   }
@@ -419,7 +458,7 @@ function renderTaskDetail(todo) {
   // Notes
   if (todo.notes) {
     detailNotesSection.classList.remove('hidden');
-    detailNotes.innerHTML = `<p class="text-on-surface text-sm">${todo.notes.replace(/\n/g, '<br>')}</p>`;
+    detailNotes.innerHTML = `<p class="text-on-surface text-sm">${escapeHtml(todo.notes).replace(/\n/g, '<br>')}</p>`;
   } else {
     detailNotesSection.classList.add('hidden');
   }
@@ -522,11 +561,12 @@ function renderDetailAttachments(todo) {
     const div = document.createElement('div');
     div.className = 'group relative aspect-video rounded-lg overflow-hidden border border-outline-variant/50 bg-surface-container-low cursor-pointer';
 
+    // typeIcon is a static enum ('image' | 'description') — safe to interpolate; att.name is user input and must be escaped.
     const typeIcon = att.type === 'image' ? 'image' : 'description';
     div.innerHTML = `
       <div class="absolute inset-0 flex flex-col items-center justify-center p-4">
         <span class="material-symbols-outlined text-3xl text-on-surface-variant mb-1">${typeIcon}</span>
-        <span class="text-[10px] text-on-surface-variant font-medium truncate max-w-full">${att.name}</span>
+        <span class="text-[10px] text-on-surface-variant font-medium truncate max-w-full">${escapeHtml(att.name)}</span>
       </div>
       <div class="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
         <span class="material-symbols-outlined text-white">download</span>
@@ -570,7 +610,10 @@ function renderDetailComments(todo) {
 
     const avatar = document.createElement('div');
     avatar.className = 'size-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0';
-    avatar.innerHTML = `<span class="text-[10px] font-bold text-primary">${c.author?.charAt(0).toUpperCase() || '?'}</span>`;
+    const avatarInitial = document.createElement('span');
+    avatarInitial.className = 'text-[10px] font-bold text-primary';
+    avatarInitial.textContent = c.author?.charAt(0).toUpperCase() || '?';
+    avatar.appendChild(avatarInitial);
 
     const body = document.createElement('div');
     body.className = 'space-y-1';
@@ -705,9 +748,7 @@ detailTimePlayBtn?.addEventListener('click', () => {
         timeTrackingInterval = null;
         return;
       }
-      t.timeSpent = (t.timeSpent || 0) + 1;
-      renderTaskDetail();
-      render();
+      app.recordTimeSpent(currentDetailTodoId, (t.timeSpent || 0) + 1);
     }, 60000); // every minute
   }
 });

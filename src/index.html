@@ -8,6 +8,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 </head>
 <body class="bg-background text-on-surface font-body-md transition-colors duration-300">
+  <!-- ─── App Loader ─── Spinner shown until JS hydrates the app -->
+  <div id="app-loader" class="app-loader" role="status" aria-label="Loading TaskFlow">
+    <div class="app-loader__content">
+      <div class="app-loader__logo" aria-hidden="true">
+        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dataset</span>
+      </div>
+      <div class="app-loader__spin" aria-hidden="true"></div>
+      <div class="app-loader__label">TaskFlow</div>
+      <div class="app-loader__sub">Loading your tasks…</div>
+    </div>
+  </div>
+
   <!-- ─── App Shell ─── -->
   <div id="app" class="flex min-h-screen">
     <!-- ─── Sidebar ─── -->
@@ -136,11 +148,11 @@
     <button id="mobile-add-todo-btn" class="-mt-10 w-14 h-14 bg-primary rounded-full flex items-center justify-center shadow-lg text-white cursor-pointer btn-press">
       <span class="material-symbols-outlined">add</span>
     </button>
-    <button class="flex flex-col items-center text-on-surface-variant cursor-pointer" onclick="event.preventDefault();">
+    <button class="flex flex-col items-center text-on-surface-variant cursor-pointer">
       <span class="material-symbols-outlined">notifications</span>
       <span class="text-[10px] font-label-sm">Alerts</span>
     </button>
-    <button onclick="event.preventDefault();" class="flex flex-col items-center text-on-surface-variant cursor-pointer">
+    <button class="flex flex-col items-center text-on-surface-variant cursor-pointer">
       <span class="material-symbols-outlined">settings</span>
       <span class="text-[10px] font-label-sm">More</span>
     </button>

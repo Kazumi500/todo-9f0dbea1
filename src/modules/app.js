@@ -128,6 +128,13 @@ class App {
     }
   }
 
+  recordTimeSpent(todoId, hours) {
+    const todo = this.currentProject?.getTodo(todoId);
+    if (!todo) return;
+    todo.timeSpent = hours;
+    this._save();
+  }
+
   setCurrentTodo(todoId) {
     this.currentTodoId = todoId;
     this._save();
