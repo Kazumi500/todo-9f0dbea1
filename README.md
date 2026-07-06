@@ -2,9 +2,9 @@
 
 > A clean, local-first todo app that organizes projects, tasks, sub-tasks, attachments, comments, and time tracking — all in your browser, no backend.
 <div align="center">
-[![Live demo](https://img.shields.io/badge/demo-live-3525cd?style=flat-square)](https://kazumi500.github.io/todo-9f0dbea1/)
-[![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](#license)
-![Made with vanilla ES modules](https://img.shields.io/badge/stack-ES%20modules%20%2B%20Tailwind-3525cd?style=flat-square)
+    <a href="https://kazumi500.github.io/todo-9f0dbea1/"><img src="https://img.shields.io/badge/demo-live-3525cd?style=flat-square"/></a>
+    <a href="#license"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="license"/></a>
+    <img src="https://img.shields.io/badge/stack-ES%20modules%20%2B%20Tailwind-3525cd?style=flat-square" alt="Made with vanilla ES modules"/>
 </div>
 <div align="center">
 
