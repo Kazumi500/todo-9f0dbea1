@@ -1,16 +1,14 @@
 # TaskFlow
 
 > A clean, local-first todo app that organizes projects, tasks, sub-tasks, attachments, comments, and time tracking — all in your browser, no backend.
-
+<div align="center">
 [![Live demo](https://img.shields.io/badge/demo-live-3525cd?style=flat-square)](https://kazumi500.github.io/todo-9f0dbea1/)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](#license)
 ![Made with vanilla ES modules](https://img.shields.io/badge/stack-ES%20modules%20%2B%20Tailwind-3525cd?style=flat-square)
-
+</div>
 <div align="center">
 
-![TaskFlow preview](./docs/preview.png)
-
-<sub>👆 Drop a screenshot into <code>docs/preview.png</code> to replace this placeholder.</sub>
+![TaskFlow preview](https://api.pikwy.com/web/6a4b96e22f00347bef413ee5.jpg)
 
 </div>
 
