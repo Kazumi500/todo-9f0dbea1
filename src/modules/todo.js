@@ -28,7 +28,13 @@ export function createTodo(
   dueDate = '',
   priority = 'medium',
   notes = '',
-  checklist = []
+  checklist = [],
+  tags = [],
+  assignee = '',
+  timeEstimate = 0,
+  timeSpent = 0,
+  comments = [],
+  attachments = []
 ) {
   return {
     id: generateId(),
@@ -38,6 +44,12 @@ export function createTodo(
     priority,
     notes,
     checklist,
+    tags,
+    assignee,
+    timeEstimate,
+    timeSpent,
+    comments,
+    attachments,
     completed: false,
     createdAt: new Date().toISOString(),
 
@@ -50,13 +62,61 @@ export function createTodo(
       this.priority = newPriority;
     },
 
-    update({ title, description, dueDate, priority, notes, checklist }) {
+    update({ title, description, dueDate, priority, notes, checklist, tags, assignee, timeEstimate, comments, attachments }) {
       if (title !== undefined) this.title = title;
       if (description !== undefined) this.description = description;
       if (dueDate !== undefined) this.dueDate = dueDate;
       if (priority !== undefined) this.priority = priority;
       if (notes !== undefined) this.notes = notes;
       if (checklist !== undefined) this.checklist = checklist;
+      if (tags !== undefined) this.tags = tags;
+      if (assignee !== undefined) this.assignee = assignee;
+      if (timeEstimate !== undefined) this.timeEstimate = timeEstimate;
+      if (comments !== undefined) this.comments = comments;
+      if (attachments !== undefined) this.attachments = attachments;
+    },
+
+    addTag(tag) {
+      if (!this.tags.includes(tag)) {
+        this.tags.push(tag);
+      }
+    },
+
+    removeTag(tag) {
+      this.tags = this.tags.filter((t) => t !== tag);
+    },
+
+    addComment(author, text) {
+      this.comments.push({
+        id: generateId(),
+        author,
+        text,
+        timestamp: new Date().toISOString(),
+      });
+    },
+
+    addAttachment(name, type) {
+      this.attachments.push({
+        id: generateId(),
+        name,
+        type: type || 'file',
+        addedAt: new Date().toISOString(),
+      });
+    },
+
+    removeAttachment(attachmentId) {
+      this.attachments = this.attachments.filter((a) => a.id !== attachmentId);
+    },
+
+    get timeProgress() {
+      if (this.timeEstimate <= 0) return 0;
+      return Math.min(100, Math.round((this.timeSpent / this.timeEstimate) * 100));
+    },
+
+    get checklistProgress() {
+      if (!this.checklist || this.checklist.length === 0) return 0;
+      const done = this.checklist.filter((i) => i.done).length;
+      return Math.round((done / this.checklist.length) * 100);
     },
 
     addChecklistItem(text) {
@@ -123,7 +183,13 @@ export function rehydrateTodo(data) {
     data.dueDate,
     data.priority,
     data.notes,
-    data.checklist
+    data.checklist,
+    data.tags || [],
+    data.assignee || '',
+    data.timeEstimate || 0,
+    data.timeSpent || 0,
+    data.comments || [],
+    data.attachments || []
   );
   todo.id = data.id;
   todo.completed = data.completed;

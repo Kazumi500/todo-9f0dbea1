@@ -71,6 +71,39 @@ const confirmCancelBtn = $('#confirm-cancel-btn');
 // Search
 const searchInput = $('#search-input');
 
+// ─── Task Detail Modal DOM Refs ────────────────────────────────────
+const taskDetailModal = $('#task-detail-modal');
+const closeTaskDetail = $('#close-task-detail');
+const detailTitle = $('#detail-title');
+const detailPriorityBadge = $('#detail-priority-badge');
+const detailDescription = $('#detail-description');
+const detailChecklist = $('#detail-checklist');
+const detailChecklistTitle = $('#detail-checklist-title');
+const detailAddSubtaskBtn = $('#detail-add-subtask-btn');
+const detailNotesSection = $('#detail-notes-section');
+const detailNotes = $('#detail-notes');
+const detailSidebarAssignee = $('#detail-sidebar-assignee');
+const detailSidebarDuedate = $('#detail-sidebar-duedate');
+const detailSidebarProject = $('#detail-sidebar-project');
+const detailSidebarPriority = $('#detail-sidebar-priority');
+const detailTags = $('#detail-tags');
+const detailTimeSpent = $('#detail-time-spent');
+const detailTimePercent = $('#detail-time-percent');
+const detailTimeBar = $('#detail-time-bar');
+const detailComments = $('#detail-comments');
+const detailCommentInput = $('#detail-comment-input');
+const detailSendCommentBtn = $('#detail-send-comment-btn');
+const detailEditBtn = $('#detail-edit-btn');
+const detailDeleteBtn = $('#detail-delete-btn');
+const detailBreadcrumbProject = $('#detail-breadcrumb-project');
+const detailBreadcrumbTitle = $('#detail-breadcrumb-title');
+const detailAssigneeAvatar = $('#detail-assignee-avatar');
+const detailAssigneeName = $('#detail-assignee-name');
+const detailAttachmentsSection = $('#detail-attachments-section');
+const detailAttachments = $('#detail-attachments');
+const detailAddAttachmentBtn = $('#detail-add-attachment-btn');
+const detailTimePlayBtn = $('#detail-time-play-btn');
+
 // ─── Mobile Sidebar ───────────────────────────────────────────────
 const sidebar = document.querySelector('aside');
 
@@ -230,13 +263,7 @@ function renderTodos() {
   const sorted = proj.todosByPriority;
   sorted.forEach((todo) => {
     const card = document.createElement('div');
-    const isExpanded = todo.id === app.currentTodoId;
-    card.className = `task-item bg-surface-container-lowest border border-outline-variant/50 p-md rounded-lg transition-all ${
-      isExpanded ? 'border-primary/40 shadow-md' : 'hover:border-outline-variant'
-    }`;
-    if (!isExpanded) {
-      card.classList.add('task-item-new');
-    }
+    card.className = 'task-item bg-surface-container-lowest border border-outline-variant/50 p-md rounded-lg transition-all hover:border-outline-variant cursor-pointer task-item-new';
     if (todo.completed) {
       card.classList.add('task-completed');
     }
@@ -245,7 +272,7 @@ function renderTodos() {
     const row = document.createElement('div');
     row.className = 'flex items-center gap-3';
 
-    // Checkbox (styled like design)
+    // Checkbox
     const checkBox = document.createElement('div');
     checkBox.className = `w-5 h-5 border-2 rounded-md flex items-center justify-center transition-all cursor-pointer flex-shrink-0 ${
       todo.completed
@@ -295,131 +322,395 @@ function renderTodos() {
       tags.appendChild(dateSpan);
     }
 
-    // Expand/collapse arrow
-    const expandIcon = document.createElement('span');
-    expandIcon.className = `material-symbols-outlined text-on-surface-variant opacity-40 transition-transform duration-200 ${
-      isExpanded ? 'rotate-180' : ''
-    }`;
-    expandIcon.textContent = 'expand_more';
+    // Open detail indicator (arrow)
+    const openIcon = document.createElement('span');
+    openIcon.className = 'material-symbols-outlined text-on-surface-variant opacity-30 text-[18px]';
+    openIcon.textContent = 'chevron_right';
 
     row.appendChild(checkBox);
     row.appendChild(dot);
     row.appendChild(title);
     row.appendChild(tags);
-    row.appendChild(expandIcon);
+    row.appendChild(openIcon);
     card.appendChild(row);
 
-    // ── Expanded Details ──
-    if (isExpanded) {
-      const expanded = document.createElement('div');
-      expanded.className = 'mt-3 pt-3 border-t border-outline-variant/30 space-y-3';
-
-      // Description
-      if (todo.description) {
-        const desc = document.createElement('p');
-        desc.className = 'font-body-sm text-body-sm text-on-surface-variant';
-        desc.textContent = todo.description;
-        expanded.appendChild(desc);
-      }
-
-      // Notes
-      if (todo.notes) {
-        const notes = document.createElement('div');
-        notes.className = 'bg-surface-container-low rounded-lg p-3';
-        const notesLabel = document.createElement('p');
-        notesLabel.className = 'font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-1';
-        notesLabel.textContent = 'Notes';
-        notes.appendChild(notesLabel);
-        const notesContent = document.createElement('p');
-        notesContent.className = 'font-body-sm text-body-sm text-on-surface';
-        notesContent.textContent = todo.notes;
-        notes.appendChild(notesContent);
-        expanded.appendChild(notes);
-      }
-
-      // Checklist inline
-      if (todo.checklist && todo.checklist.length > 0) {
-        const cl = document.createElement('div');
-        cl.className = 'space-y-1';
-        const clLabel = document.createElement('p');
-        clLabel.className = 'font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider';
-        const doneCount = todo.checklist.filter(i => i.done).length;
-        clLabel.textContent = `Checklist (${doneCount}/${todo.checklist.length})`;
-        cl.appendChild(clLabel);
-        todo.checklist.forEach((item, idx) => {
-          const itemDiv = document.createElement('div');
-          itemDiv.className = 'flex items-center gap-2 py-0.5';
-          const cb = document.createElement('input');
-          cb.type = 'checkbox';
-          cb.checked = item.done;
-          cb.className = 'h-4 w-4 rounded border-outline-variant text-primary focus:ring-primary cursor-pointer';
-          cb.addEventListener('change', () => {
-            app.toggleChecklistItem(todo.id, idx);
-            render();
-          });
-          const label = document.createElement('span');
-          label.className = `font-body-sm text-body-sm ${item.done ? 'line-through text-on-surface-variant opacity-60' : 'text-on-surface'}`;
-          label.textContent = item.text;
-          itemDiv.appendChild(cb);
-          itemDiv.appendChild(label);
-          cl.appendChild(itemDiv);
-        });
-        expanded.appendChild(cl);
-      }
-
-      // Action buttons row
-      const actions = document.createElement('div');
-      actions.className = 'flex gap-2 pt-2';
-
-      const editBtn = document.createElement('button');
-      editBtn.className = 'flex items-center gap-1 px-3 py-1.5 font-label-sm text-label-sm text-primary bg-primary/5 hover:bg-primary/10 rounded-lg transition-colors cursor-pointer';
-      editBtn.innerHTML = '<span class="material-symbols-outlined text-[16px]">edit</span> Edit';
-      editBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openEditTodoModal(todo);
-      });
-
-      const checklistBtn = document.createElement('button');
-      checklistBtn.className = 'flex items-center gap-1 px-3 py-1.5 font-label-sm text-label-sm text-tertiary bg-tertiary/5 hover:bg-tertiary/10 rounded-lg transition-colors cursor-pointer';
-      checklistBtn.innerHTML = '<span class="material-symbols-outlined text-[16px]">checklist</span> Checklist';
-      checklistBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        app.currentTodoId = todo.id;
-        openChecklistModal(todo);
-      });
-
-      const deleteBtn = document.createElement('button');
-      deleteBtn.className = 'flex items-center gap-1 px-3 py-1.5 font-label-sm text-label-sm text-error bg-error/5 hover:bg-error/10 rounded-lg transition-colors cursor-pointer';
-      deleteBtn.innerHTML = '<span class="material-symbols-outlined text-[16px]">delete</span> Delete';
-      deleteBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openConfirm('Delete Task', `Are you sure you want to delete "${todo.title}"?`, () => {
-          app.removeTodo(todo.id);
-          render();
-        });
-      });
-
-      actions.appendChild(editBtn);
-      actions.appendChild(checklistBtn);
-      actions.appendChild(deleteBtn);
-      expanded.appendChild(actions);
-
-      card.appendChild(expanded);
-    }
-
-    // Click to expand/collapse
+    // Click to open task detail modal
     card.addEventListener('click', (e) => {
       if (e.target.closest('button')) return;
       if (e.target.closest('.priority-dot')) return;
       if (e.target.tagName === 'INPUT') return;
       if (e.target.closest('.w-5.h-5')) return;
-      app.setCurrentTodo(isExpanded ? null : todo.id);
-      render();
+      app.setCurrentTodo(todo.id);
+      openTaskDetailModal(todo);
     });
 
     todoList.appendChild(card);
   });
 }
+
+// ─── Task Detail Modal ────────────────────────────────────────────
+let currentDetailTodoId = null;
+
+function openTaskDetailModal(todo) {
+  if (!todo) return;
+  currentDetailTodoId = todo.id;
+  renderTaskDetail(todo);
+  taskDetailModal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeTaskDetailModal() {
+  // Clean up time tracking if active
+  if (timeTrackingInterval) {
+    clearInterval(timeTrackingInterval);
+    timeTrackingInterval = null;
+  }
+  taskDetailModal.classList.add('hidden');
+  currentDetailTodoId = null;
+  document.body.style.overflow = '';
+}
+
+function renderTaskDetail(todo) {
+  if (!todo) {
+    const refreshed = app.currentProject?.getTodo(currentDetailTodoId);
+    if (!refreshed) { closeTaskDetailModal(); return; }
+    todo = refreshed;
+  }
+
+  const proj = app.currentProject;
+
+  // Breadcrumb
+  detailBreadcrumbProject.textContent = proj?.name || 'Projects';
+  detailBreadcrumbTitle.textContent = todo.title;
+
+  // Title
+  detailTitle.textContent = todo.title;
+
+  // Priority badge
+  detailPriorityBadge.textContent = todo.priorityLabel + ' Priority';
+  detailPriorityBadge.className = `px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+    todo.priority === 'high' ? 'bg-error/15 text-error border border-error/30' :
+    todo.priority === 'medium' ? 'bg-secondary-container/50 text-on-secondary-container border border-secondary-container' :
+    'bg-surface-variant text-on-surface-variant border border-outline-variant'
+  }`;
+
+  // Assignee avatar area
+  if (todo.assignee) {
+    const initial = todo.assignee.charAt(0).toUpperCase();
+    detailAssigneeAvatar.innerHTML = `<span class="text-primary text-xs font-bold">${initial}</span>`;
+    detailAssigneeAvatar.className = 'size-8 rounded-full border-2 border-surface-container-lowest bg-primary/10 flex items-center justify-center';
+    detailAssigneeName.textContent = todo.assignee;
+  } else {
+    detailAssigneeAvatar.innerHTML = '<span class="material-symbols-outlined text-primary text-sm">person</span>';
+    detailAssigneeAvatar.className = 'size-8 rounded-full border-2 border-surface-container-lowest bg-primary/10 flex items-center justify-center';
+    detailAssigneeName.textContent = 'Unassigned';
+  }
+
+  // Description
+  if (todo.description) {
+    detailDescription.innerHTML = `<p class="text-on-surface leading-relaxed">${todo.description.replace(/\n/g, '<br>')}</p>`;
+  } else {
+    detailDescription.innerHTML = '<p class="text-on-surface-variant italic">No description provided.</p>';
+  }
+
+  // Checklist (subtasks)
+  renderDetailChecklist(todo);
+
+  // Notes
+  if (todo.notes) {
+    detailNotesSection.classList.remove('hidden');
+    detailNotes.innerHTML = `<p class="text-on-surface text-sm">${todo.notes.replace(/\n/g, '<br>')}</p>`;
+  } else {
+    detailNotesSection.classList.add('hidden');
+  }
+
+  // Sidebar
+  detailSidebarAssignee.textContent = todo.assignee || 'Unassigned';
+  detailSidebarDuedate.textContent = todo.formattedDueDate;
+  detailSidebarDuedate.className = `text-sm font-medium ${todo.isOverdue ? 'text-error' : 'text-on-surface'}`;
+  detailSidebarProject.textContent = proj?.name || '—';
+  detailSidebarPriority.textContent = todo.priorityLabel;
+
+  // Tags
+  detailTags.innerHTML = '';
+  if (todo.tags && todo.tags.length > 0) {
+    todo.tags.forEach((tag) => {
+      const span = document.createElement('span');
+      span.className = 'px-2 py-1 bg-surface-container-high text-[11px] font-bold rounded border border-outline-variant/50 text-on-surface-variant';
+      span.textContent = tag;
+      detailTags.appendChild(span);
+    });
+  } else {
+    detailTags.innerHTML = '<span class="text-xs text-on-surface-variant italic">No tags</span>';
+  }
+
+  // Time tracking
+  const total = todo.timeEstimate || 0;
+  const spent = todo.timeSpent || 0;
+  const pct = total > 0 ? Math.min(100, Math.round((spent / total) * 100)) : 0;
+  detailTimeSpent.innerHTML = `${spent}h <span class="text-on-surface-variant text-sm font-normal">/ ${total}h total</span>`;
+  detailTimePercent.textContent = `${pct}% complete`;
+  detailTimeBar.style.width = `${pct}%`;
+
+  // Attachments
+  renderDetailAttachments(todo);
+
+  // Comments
+  renderDetailComments(todo);
+}
+
+function renderDetailChecklist(todo) {
+  const items = todo.checklist || [];
+  const done = items.filter((i) => i.done).length;
+  detailChecklistTitle.textContent = `Subtasks (${done}/${items.length})`;
+
+  detailChecklist.innerHTML = '';
+  if (items.length === 0) {
+    detailChecklist.innerHTML = '<p class="text-sm text-on-surface-variant italic opacity-60">No subtasks yet.</p>';
+    return;
+  }
+
+  items.forEach((item, idx) => {
+    const label = document.createElement('label');
+    label.className = 'flex items-center gap-3 p-3 bg-surface-container-low rounded-lg border border-transparent hover:border-outline-variant/50 cursor-pointer group transition-all';
+
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.checked = item.done;
+    cb.className = 'w-5 h-5 rounded border-outline-variant bg-transparent text-primary focus:ring-primary focus:ring-offset-0 cursor-pointer';
+    cb.addEventListener('change', () => {
+      app.toggleChecklistItem(todo.id, idx);
+      renderDetailChecklist(todo);
+      render();
+    });
+
+    const text = document.createElement('span');
+    text.className = `text-sm ${item.done ? 'text-on-surface-variant line-through group-hover:text-on-surface' : 'text-on-surface group-hover:text-primary'}`;
+    text.textContent = item.text;
+
+    label.appendChild(cb);
+    label.appendChild(text);
+    detailChecklist.appendChild(label);
+  });
+}
+
+function renderDetailAttachments(todo) {
+  const attachments = todo.attachments || [];
+  detailAttachments.innerHTML = '';
+
+  if (attachments.length === 0) {
+    // Show an upload placeholder
+    const placeholder = document.createElement('button');
+    placeholder.className = 'aspect-video rounded-lg border-2 border-dashed border-outline-variant/50 flex flex-col items-center justify-center hover:border-primary transition-colors text-on-surface-variant hover:text-primary cursor-pointer col-span-full';
+    placeholder.innerHTML = `
+      <span class="material-symbols-outlined text-2xl">add_circle</span>
+      <span class="text-[10px] font-bold uppercase mt-1">Add File</span>
+    `;
+    placeholder.addEventListener('click', () => {
+      const name = prompt('Enter file name:');
+      if (name && name.trim()) {
+        todo.addAttachment(name.trim(), 'file');
+        renderTaskDetail();
+        render();
+      }
+    });
+    detailAttachments.appendChild(placeholder);
+    return;
+  }
+
+  attachments.forEach((att) => {
+    const div = document.createElement('div');
+    div.className = 'group relative aspect-video rounded-lg overflow-hidden border border-outline-variant/50 bg-surface-container-low cursor-pointer';
+
+    const typeIcon = att.type === 'image' ? 'image' : 'description';
+    div.innerHTML = `
+      <div class="absolute inset-0 flex flex-col items-center justify-center p-4">
+        <span class="material-symbols-outlined text-3xl text-on-surface-variant mb-1">${typeIcon}</span>
+        <span class="text-[10px] text-on-surface-variant font-medium truncate max-w-full">${att.name}</span>
+      </div>
+      <div class="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+        <span class="material-symbols-outlined text-white">download</span>
+      </div>
+    `;
+    detailAttachments.appendChild(div);
+  });
+
+  // Add file button
+  const addBtn = document.createElement('button');
+  addBtn.className = 'aspect-video rounded-lg border-2 border-dashed border-outline-variant/50 flex flex-col items-center justify-center hover:border-primary transition-colors text-on-surface-variant hover:text-primary cursor-pointer';
+  addBtn.innerHTML = `
+    <span class="material-symbols-outlined text-2xl">add_circle</span>
+    <span class="text-[10px] font-bold uppercase mt-1">Add File</span>
+  `;
+  addBtn.addEventListener('click', () => {
+    const name = prompt('Enter file name:');
+    if (name && name.trim()) {
+      todo.addAttachment(name.trim(), 'file');
+      renderTaskDetail();
+      render();
+    }
+  });
+  detailAttachments.appendChild(addBtn);
+}
+
+function renderDetailComments(todo) {
+  const comments = todo.comments || [];
+  detailComments.innerHTML = '';
+
+  if (comments.length === 0) {
+    detailComments.innerHTML = '<p class="text-sm text-on-surface-variant italic text-center py-4 opacity-60">No activity yet.</p>';
+    return;
+  }
+
+  // Show newest first
+  const sorted = [...comments].reverse();
+  sorted.forEach((c) => {
+    const div = document.createElement('div');
+    div.className = 'flex gap-3';
+
+    const avatar = document.createElement('div');
+    avatar.className = 'size-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0';
+    avatar.innerHTML = `<span class="text-[10px] font-bold text-primary">${c.author?.charAt(0).toUpperCase() || '?'}</span>`;
+
+    const body = document.createElement('div');
+    body.className = 'space-y-1';
+
+    const meta = document.createElement('div');
+    meta.className = 'flex items-center gap-2';
+    const author = document.createElement('span');
+    author.className = 'text-xs font-bold text-on-surface';
+    author.textContent = c.author || 'Unknown';
+    const time = document.createElement('span');
+    time.className = 'text-[10px] text-on-surface-variant opacity-60';
+    time.textContent = getTimeAgo(c.timestamp);
+    meta.appendChild(author);
+    meta.appendChild(time);
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bg-surface-container-low p-3 rounded-lg border border-outline-variant/30 text-sm text-on-surface-variant';
+    bubble.textContent = c.text;
+
+    body.appendChild(meta);
+    body.appendChild(bubble);
+    div.appendChild(avatar);
+    div.appendChild(body);
+    detailComments.appendChild(div);
+  });
+}
+
+function getTimeAgo(timestamp) {
+  if (!timestamp) return '';
+  const now = new Date();
+  const date = new Date(timestamp);
+  const diffMs = now - date;
+  const diffMins = Math.floor(diffMs / 60000);
+  if (diffMins < 1) return 'just now';
+  if (diffMins < 60) return `${diffMins}m ago`;
+  const diffHours = Math.floor(diffMins / 60);
+  if (diffHours < 24) return `${diffHours}h ago`;
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return format(date, 'MMM d');
+}
+
+// ─── Detail Modal Event Wiring ────────────────────────────────────
+closeTaskDetail?.addEventListener('click', () => {
+  app.setCurrentTodo(null);
+  closeTaskDetailModal();
+  render();
+});
+
+taskDetailModal?.addEventListener('click', (e) => {
+  if (e.target === taskDetailModal) {
+    app.setCurrentTodo(null);
+    closeTaskDetailModal();
+    render();
+  }
+});
+
+detailEditBtn?.addEventListener('click', () => {
+  const todo = app.currentProject?.getTodo(currentDetailTodoId);
+  if (!todo) return;
+  closeTaskDetailModal();
+  openEditTodoModal(todo);
+});
+
+detailDeleteBtn?.addEventListener('click', () => {
+  const todo = app.currentProject?.getTodo(currentDetailTodoId);
+  if (!todo) return;
+  closeTaskDetailModal();
+  openConfirm('Delete Task', `Are you sure you want to delete "${todo.title}"?`, () => {
+    app.removeTodo(todo.id);
+    render();
+  });
+});
+
+detailAddSubtaskBtn?.addEventListener('click', () => {
+  const todo = app.currentProject?.getTodo(currentDetailTodoId);
+  if (!todo) return;
+  const text = prompt('Enter subtask name:');
+  if (text && text.trim()) {
+    app.addChecklistItem(todo.id, text.trim());
+    renderTaskDetail();
+    render();
+  }
+});
+
+detailSendCommentBtn?.addEventListener('click', () => {
+  const todo = app.currentProject?.getTodo(currentDetailTodoId);
+  if (!todo) return;
+  const text = detailCommentInput.value.trim();
+  if (!text) return;
+  todo.addComment('You', text);
+  detailCommentInput.value = '';
+  renderTaskDetail();
+  render();
+});
+
+detailCommentInput?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    detailSendCommentBtn?.click();
+  }
+});
+
+detailBreadcrumbProject?.addEventListener('click', () => {
+  app.setCurrentTodo(null);
+  closeTaskDetailModal();
+  render();
+});
+
+// ─── Time Tracking Play Button ────────────────────────────────────
+let timeTrackingInterval = null;
+
+detailTimePlayBtn?.addEventListener('click', () => {
+  const todo = app.currentProject?.getTodo(currentDetailTodoId);
+  if (!todo) return;
+
+  if (timeTrackingInterval) {
+    // Stop tracking
+    clearInterval(timeTrackingInterval);
+    timeTrackingInterval = null;
+    detailTimePlayBtn.innerHTML = '<span class="material-symbols-outlined text-lg" style="font-variation-settings: \'FILL\' 1;">play_arrow</span>';
+    detailTimePlayBtn.className = 'size-8 bg-primary rounded-full flex items-center justify-center text-white hover:scale-105 transition-transform shadow-lg shadow-primary/20 cursor-pointer';
+  } else {
+    // Start tracking - increment timeSpent every minute
+    detailTimePlayBtn.innerHTML = '<span class="material-symbols-outlined text-lg" style="font-variation-settings: \'FILL\' 1;">pause</span>';
+    detailTimePlayBtn.className = 'size-8 bg-error rounded-full flex items-center justify-center text-white hover:scale-105 transition-transform shadow-lg shadow-error/20 cursor-pointer animate-pulse';
+
+    timeTrackingInterval = setInterval(() => {
+      const t = app.currentProject?.getTodo(currentDetailTodoId);
+      if (!t || taskDetailModal.classList.contains('hidden')) {
+        clearInterval(timeTrackingInterval);
+        timeTrackingInterval = null;
+        return;
+      }
+      t.timeSpent = (t.timeSpent || 0) + 1;
+      renderTaskDetail();
+      render();
+    }, 60000); // every minute
+  }
+});
 
 // ─── Search ────────────────────────────────────────────────────────
 let searchTimeout = null;
@@ -620,6 +911,7 @@ document.addEventListener('keydown', (e) => {
     else if (!todoModal.classList.contains('hidden')) closeTodoModalFn();
     else if (!checklistModal.classList.contains('hidden')) closeChecklistModalFn();
     else if (!projectModal.classList.contains('hidden')) closeProjectModalFn();
+    else if (!taskDetailModal.classList.contains('hidden')) { app.setCurrentTodo(null); closeTaskDetailModal(); render(); }
   }
   if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
     e.preventDefault();
