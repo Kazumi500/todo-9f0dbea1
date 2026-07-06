@@ -125,7 +125,7 @@ function toggleMobileSidebar(show) {
   }
 }
 
-mobileMenuBtn?.addEventListener('click', () => toggleMobileSidebar(true));
+mobileMenuBtn?.addEventListener('click', () => toggleMobileSidebar());
 mobileSidebarOverlay?.addEventListener('click', () => toggleMobileSidebar(false));
 mobileAddTodoBtn?.addEventListener('click', openNewTodoModal);
 mobileAddBtn?.addEventListener('click', () => {
