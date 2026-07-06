@@ -1,0 +1,200 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors - Material Design 3 palette */
+  --color-primary: #3525cd;
+  --color-surface-container: #eceef0;
+  --color-secondary-container: #dae2fd;
+  --color-on-secondary: #ffffff;
+  --color-on-tertiary-fixed: #0b1c30;
+  --color-surface-bright: #f7f9fb;
+  --color-surface-dim: #d8dadc;
+  --color-secondary: #565e74;
+  --color-on-primary-fixed-variant: #3323cc;
+  --color-primary-container: #4f46e5;
+  --color-on-secondary-fixed: #131b2e;
+  --color-on-error-container: #93000a;
+  --color-on-primary: #ffffff;
+  --color-outline-variant: #c7c4d8;
+  --color-surface-container-highest: #e0e3e5;
+  --color-surface-tint: #4d44e3;
+  --color-tertiary: #3a495f;
+  --color-surface-container-low: #f2f4f6;
+  --color-background: #f7f9fb;
+  --color-tertiary-fixed: #d3e4fe;
+  --color-on-secondary-container: #5c647a;
+  --color-surface-container-lowest: #ffffff;
+  --color-on-primary-container: #dad7ff;
+  --color-tertiary-container: #516177;
+  --color-on-error: #ffffff;
+  --color-primary-fixed: #e2dfff;
+  --color-on-surface-variant: #464555;
+  --color-surface: #f7f9fb;
+  --color-inverse-surface: #2d3133;
+  --color-primary-fixed-dim: #c3c0ff;
+  --color-on-surface: #191c1e;
+  --color-inverse-on-surface: #eff1f3;
+  --color-on-primary-fixed: #0f0069;
+  --color-on-tertiary: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-secondary-fixed: #dae2fd;
+  --color-tertiary-fixed-dim: #b7c8e1;
+  --color-secondary-fixed-dim: #bec6e0;
+  --color-on-tertiary-fixed-variant: #38485d;
+  --color-on-background: #191c1e;
+  --color-outline: #777587;
+  --color-surface-container-high: #e6e8ea;
+  --color-on-secondary-fixed-variant: #3f465c;
+  --color-on-tertiary-container: #ccdcf7;
+  --color-surface-variant: #e0e3e5;
+  --color-error: #ba1a1a;
+  --color-inverse-primary: #c3c0ff;
+
+  /* Priority colors (custom additions) */
+  --color-priority-high: #ef4444;
+  --color-priority-medium: #eab308;
+  --color-priority-low: #22c55e;
+
+  /* Font families */
+  --font-headline-md: "Geist", sans-serif;
+  --font-headline-lg: "Geist", sans-serif;
+  --font-headline-lg-mobile: "Geist", sans-serif;
+  --font-body-lg: "Inter", sans-serif;
+  --font-body-md: "Inter", sans-serif;
+  --font-label-md: "Geist", sans-serif;
+  --font-body-sm: "Inter", sans-serif;
+  --font-label-sm: "Geist", sans-serif;
+  --font-display: "Geist", sans-serif;
+
+  /* Font sizes - bumped up */
+  --text-headline-md: 28px;
+  --text-headline-md--line-height: 1.3;
+  --text-headline-md--font-weight: 600;
+  --text-headline-lg: 36px;
+  --text-headline-lg--line-height: 1.2;
+  --text-headline-lg--letter-spacing: -0.01em;
+  --text-headline-lg--font-weight: 600;
+  --text-headline-lg-mobile: 28px;
+  --text-headline-lg-mobile--line-height: 1.2;
+  --text-headline-lg-mobile--font-weight: 600;
+  --text-body-lg: 20px;
+  --text-body-lg--line-height: 1.6;
+  --text-body-lg--font-weight: 400;
+  --text-body-md: 18px;
+  --text-body-md--line-height: 1.5;
+  --text-body-md--font-weight: 400;
+  --text-label-md: 16px;
+  --text-label-md--line-height: 1;
+  --text-label-md--letter-spacing: 0.02em;
+  --text-label-md--font-weight: 500;
+  --text-body-sm: 16px;
+  --text-body-sm--line-height: 1.5;
+  --text-body-sm--font-weight: 400;
+  --text-label-sm: 14px;
+  --text-label-sm--line-height: 1;
+  --text-label-sm--font-weight: 600;
+  --text-display: 56px;
+  --text-display--line-height: 1.1;
+  --text-display--letter-spacing: -0.02em;
+  --text-display--font-weight: 700;
+
+  /* Border radius */
+  --radius-default: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+
+  /* Spacing - bumped up */
+  --spacing-gutter: 28px;
+  --spacing-lg: 32px;
+  --spacing-sm: 12px;
+  --spacing-container_max: 1400px;
+  --spacing-base: 4px;
+  --spacing-xs: 6px;
+  --spacing-md: 24px;
+  --spacing-xl: 48px;
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────────── */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #464555;
+  border-radius: 10px;
+}
+
+/* ─── Task Items ───────────────────────────────────────────────── */
+.task-item {
+  transition: all 0.15s ease;
+}
+.task-item:hover {
+  background-color: rgba(53, 37, 205, 0.04);
+}
+
+/* Priority dot */
+.priority-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.priority-dot.high { background-color: var(--color-priority-high); }
+.priority-dot.medium { background-color: var(--color-priority-medium); }
+.priority-dot.low { background-color: var(--color-priority-low); }
+
+/* Animation for new items */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.task-item-new {
+  animation: slideIn 0.25s ease-out;
+}
+
+/* ─── Project nav items ────────────────────────────────────────── */
+.project-nav-item.active {
+  background-color: var(--color-secondary-container);
+  color: var(--color-on-secondary-container);
+  font-weight: 500;
+}
+
+/* ─── Completed todo ───────────────────────────────────────────── */
+.task-completed .task-title {
+  text-decoration: line-through;
+  color: var(--color-on-surface-variant);
+  opacity: 0.6;
+}
+
+/* ─── Empty state ──────────────────────────────────────────────── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: var(--color-on-surface-variant);
+  opacity: 0.5;
+}
+
+/* ─── Search bar animation ─────────────────────────────────────── */
+.search-bar:focus-within {
+  transform: scale(1.02);
+}
+
+/* ─── Active scale for buttons ─────────────────────────────────── */
+.btn-press:active {
+  transform: scale(0.95);
+}
+
+/* ─── Material Symbols base ────────────────────────────────────── */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+.material-symbols-filled {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}

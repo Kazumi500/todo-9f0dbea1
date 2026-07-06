@@ -1,0 +1,37 @@
+{
+  "name": "todo-9f0dbea1",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --mode production",
+    "dev": "webpack serve --mode development --open",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kazumi500/todo-9f0dbea1.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kazumi500/todo-9f0dbea1/issues"
+  },
+  "homepage": "https://github.com/Kazumi500/todo-9f0dbea1#readme",
+  "description": "",
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.2",
+    "autoprefixer": "^10.5.2",
+    "css-loader": "^7.1.4",
+    "html-webpack-plugin": "^5.6.7",
+    "postcss-loader": "^8.2.1",
+    "style-loader": "^4.0.0",
+    "tailwindcss": "^4.3.2",
+    "webpack": "^5.108.4",
+    "webpack-cli": "^7.2.1",
+    "webpack-dev-server": "^6.0.0"
+  },
+  "dependencies": {
+    "date-fns": "^4.4.0"
+  }
+}
